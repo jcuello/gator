@@ -33,17 +33,7 @@ func Read() (Config, error) {
 }
 
 func (cfg *Config) SetUser(username string) error {
-	configPath, err := getConfigFilePath()
-	if err != nil {
-		return err
-	}
-
 	cfg.CurrentUsername = username
-	jsonBytes, err := json.Marshal(cfg)
-	if err != nil {
-		return err
-	}
 
-	configFile := path.Join(configPath, configFileName)
-	return os.WriteFile(configFile, jsonBytes, defaultFilePerm)
+	return write(*cfg)
 }

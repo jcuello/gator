@@ -1,8 +1,7 @@
 package main
 
 import (
-	"errors"
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/jcuello/gator/internal/config"
@@ -12,32 +11,21 @@ func main() {
 	cfg, err := config.Read()
 
 	if err != nil {
-		printErrorAndExit(err)
+		log.Fatal(err)
 	}
 
-	appState := state{cfg: &cfg}
+	appState := &state{cfg: &cfg}
 	cliCommands := commands{cmds: map[string]func(*state, command) error{}}
 	cliCommands.register("login", handlerLogin)
+	cmdName := os.Args[1]
+	cmdArgs := os.Args[2:]
 
-	cliArgs := os.Args
-	argCount := len(cliArgs)
-
-	if argCount < 2 {
-		printErrorAndExit(errors.New("error: not enough arguments provided"))
+	if len(os.Args) < 2 {
+		log.Fatalf("Usage: %v <command> [args...]\n", cmdName)
 	}
 
-	if argCount < 3 {
-		printErrorAndExit(errors.New("error: login command requires a username"))
-	}
-
-	err = cliCommands.run(&appState, command{name: "login", args: cliArgs[2:]})
+	err = cliCommands.run(appState, command{name: cmdName, args: cmdArgs})
 	if err != nil {
-		printErrorAndExit(err)
+		log.Fatal(err)
 	}
-
-}
-
-func printErrorAndExit(err error) {
-	fmt.Printf("%v\n", err)
-	os.Exit(1)
 }

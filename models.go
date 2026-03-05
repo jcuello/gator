@@ -4,9 +4,11 @@ import (
 	"fmt"
 
 	c "github.com/jcuello/gator/internal/config"
+	"github.com/jcuello/gator/internal/database"
 )
 
 type state struct {
+	db  *database.Queries
 	cfg *c.Config
 }
 

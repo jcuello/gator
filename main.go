@@ -1,11 +1,14 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/jcuello/gator/internal/config"
+	"github.com/jcuello/gator/internal/database"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -15,12 +18,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	appState := &state{cfg: &cfg}
+	db, err := sql.Open("postgres", cfg.DbUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dbQueries := database.New(db)
+	appState := &state{cfg: &cfg, db: dbQueries}
 	cliCommands := commands{cmds: map[string]func(*state, command) error{}}
 	cliCommands.register("login", handlerLogin)
+	cliCommands.register("register", handlerRegister)
 
 	if len(os.Args) < 2 {
-		fmt.Printf("Usage: %v <command> [args...]\n", os.Args[0])
+		fmt.Println("Usage: gator <command> [args...]")
 		os.Exit(1)
 	}
 

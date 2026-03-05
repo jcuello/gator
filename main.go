@@ -28,6 +28,7 @@ func main() {
 	cliCommands := commands{cmds: map[string]func(*state, command) error{}}
 	cliCommands.register("login", handlerLogin)
 	cliCommands.register("register", handlerRegister)
+	cliCommands.register("reset", handlerReset)
 
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: gator <command> [args...]")

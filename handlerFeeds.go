@@ -12,7 +12,7 @@ func handlerFeeds(s *state, cmd command) error {
 	}
 
 	for _, feed := range feeds {
-		fmt.Printf("%v | %v | %v\n", feed.FeedName, feed.Url, feed.Username.String)
+		fmt.Printf("%v | %v | %v\n", feed.FeedName, feed.Url, feed.Username)
 	}
 	return nil
 }

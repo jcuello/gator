@@ -31,10 +31,10 @@ func main() {
 	cliCommands.register("reset", handlerReset)
 	cliCommands.register("users", handlerUsers)
 	cliCommands.register("agg", handlerAgg)
-	cliCommands.register("addfeed", handlerAddFeed)
 	cliCommands.register("feeds", handlerFeeds)
-	cliCommands.register("follow", handlerFollow)
-	cliCommands.register("following", handlerFollowing)
+	cliCommands.register("addfeed", middlewareLoggedIn(handlerAddFeed))
+	cliCommands.register("follow", middlewareLoggedIn(handlerFollow))
+	cliCommands.register("following", middlewareLoggedIn(handlerFollowing))
 
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: gator <command> [args...]")

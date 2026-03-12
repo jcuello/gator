@@ -10,17 +10,12 @@ import (
 	"github.com/jcuello/gator/internal/database"
 )
 
-func handlerFollow(s *state, cmd command) error {
+func handlerFollow(s *state, cmd command, user database.User) error {
 	if len(cmd.args) != 1 {
 		return errors.New("follow requires a single url argument")
 	}
 
 	feed, err := s.db.GetFeed(context.Background(), cmd.args[0])
-	if err != nil {
-		return err
-	}
-
-	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUsername)
 	if err != nil {
 		return err
 	}

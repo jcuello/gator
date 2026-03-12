@@ -10,13 +10,9 @@ import (
 	"github.com/jcuello/gator/internal/database"
 )
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.args) < 2 {
 		return errors.New("addFeed expects two arguments <name> <url>")
-	}
-	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUsername)
-	if err != nil {
-		return err
 	}
 
 	name, url := cmd.args[0], cmd.args[1]

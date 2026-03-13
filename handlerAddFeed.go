@@ -12,7 +12,7 @@ import (
 
 func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.args) < 2 {
-		return errors.New("addFeed expects two arguments <name> <url>")
+		return errors.New("addfeed expects two arguments <name> <url>")
 	}
 
 	name, url := cmd.args[0], cmd.args[1]

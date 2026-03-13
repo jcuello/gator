@@ -6,7 +6,12 @@ import (
 	"fmt"
 	"html"
 	"io"
+	"log"
 	"net/http"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/jcuello/gator/internal/database"
 )
 
 type RSSFeed struct {
@@ -64,18 +69,38 @@ func scrapeFeeds(s *state) error {
 	}
 
 	fmt.Printf("Feed %v is being fetched...\n", feed.Name)
-	err = s.db.MarkFeedFetched(context.Background(), feed.ID)
-	if err != nil {
-		return err
-	}
-
 	rssFeed, err := fetchFeed(context.Background(), feed.Url)
 	if err != nil {
 		return err
 	}
 
 	for _, item := range rssFeed.Channel.Item {
-		fmt.Println(item.Title)
+		now := time.Now()
+
+		pubDate, err := time.Parse(time.RFC1123Z, item.PubDate)
+		if err != nil {
+			pubDate, _ = time.Parse(time.RFC1123, item.PubDate)
+		}
+
+		_, err = s.db.CreatePost(context.Background(), database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   now,
+			UpdatedAt:   now,
+			Title:       item.Title,
+			Url:         item.Link,
+			Description: item.Description,
+			PublishedAt: pubDate,
+			FeedID:      feed.ID,
+		})
+
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	err = s.db.MarkFeedFetched(context.Background(), feed.ID)
+	if err != nil {
+		return err
 	}
 
 	fmt.Printf("\n%v COMPLETED!\n\n", feed.Name)

@@ -36,6 +36,7 @@ func main() {
 	cliCommands.register("follow", middlewareLoggedIn(handlerFollow))
 	cliCommands.register("following", middlewareLoggedIn(handlerFollowing))
 	cliCommands.register("unfollow", middlewareLoggedIn(handlerUnfollow))
+	cliCommands.register("browse", middlewareLoggedIn(handlerBrowse))
 
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: gator <command> [args...]")
